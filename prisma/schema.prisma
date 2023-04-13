@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Agent {
+  AgentID   String  @id(map: "PK_Agent") @db.NVarChar(7)
+  AgentName String  @db.NVarChar(150)
+  Address   String? @db.NVarChar(200)
+  CityID    String  @db.NVarChar(3)
+  Cperson   String? @db.NVarChar(75)
+  Ph        String? @db.NVarChar(25)
+  Mob       String? @db.NVarChar(25)
+  Email     String? @db.NVarChar(30)
+}
+
+model Cat {
+  CatID   String @id(map: "PK_Cat") @db.NVarChar(2)
+  CatName String @db.NVarChar(75)
+  Generics  Gen[]
+}
+
+model City {
+  CityID   String @id(map: "PK_City") @db.NVarChar(3)
+  CityName String @db.NVarChar(75)
+  ConID    String @db.NVarChar(3)
+  Country  Cont   @relation(fields: [ConID], references: [ConID])
+  Manufs   Manu[]
+  Imps     Imp[]
+}
+
+model Cont {
+  ConID   String @id(map: "PK_Cont") @db.NVarChar(3)
+  ConName String @db.NVarChar(75)
+  Cities  City[]
+}
+
+model Gen {
+  GenID   String @id(map: "PK_Gen") @db.NVarChar(4)
+  GenName String @db.NVarChar(150)
+  CatID   String @db.NVarChar(2)
+  Category  Cat  @relation(fields: [CatID], references: [CatID])
+  Products  Prod[]
+}
+
+model ImD {
+  ImID     String   @db.NVarChar(7)
+  ImDate   DateTime @db.DateTime
+  ProdID   String   @db.NVarChar(4)
+  Products Prod     @relation(fields: [ProdID], references: [ProdID], onUpdate: NoAction)     
+  Qty      Float
+  Rate     Float
+  Amt      Float
+  CashDate DateTime @db.DateTime
+  CashNo   String?  @db.NVarChar(7)
+  ImpID    String   @db.NVarChar(3)
+  ContName String?  @db.NVarChar(50)
+  RowId    String   @db.UniqueIdentifier
+  DStatus  String   @db.NVarChar(10)
+  Id       Decimal  @db.Decimal(18, 0) @id
+  ImMs     ImM      @relation(fields: [ImID], references: [ImID])
+}
+
+model ImM {
+  ImID    String   @id(map: "PK_ImM") @db.NVarChar(7)
+  ImDate  DateTime @db.DateTime
+  ImpID   String   @db.NVarChar(3)
+  Importer  Imp    @relation(fields: [ImpID], references: [ImpID])
+  DS      String   @db.NVarChar(20)
+  Remarks String?  @db.NVarChar(200)
+  Status  String   @db.NVarChar(10)
+  ImDs    ImD[]
+}
+
+model Imp {
+  ImpID   String  @id(map: "PK_Imp") @db.NVarChar(7)
+  ImpName String  @db.NVarChar(150)
+  Address String? @db.NVarChar(200)
+  CityID  String  @db.NVarChar(3)
+  City    City    @relation(fields: [CityID], references: [CityID])
+  Cperson String? @db.NVarChar(75)
+  Ph      String? @db.NVarChar(25)
+  Mob     String? @db.NVarChar(25)
+  Email   String? @db.NVarChar(30)
+  ImMs    ImM[]
+}
+
+model Manu {
+  ManuID   String  @id(map: "PK_Manu") @db.NVarChar(3)
+  ManuName String  @db.NVarChar(150)
+  Address  String? @db.NVarChar(200)
+  CityID   String  @db.NVarChar(3)
+  City     City    @relation(fields: [CityID], references: [CityID])
+  Cperson  String? @db.NVarChar(75)
+  Ph       String? @db.NVarChar(25)
+  Mob      String? @db.NVarChar(25)
+  Email    String? @db.NVarChar(30)
+  Products Prod[]
+}
+
+model Menu {
+  MenuID String @id(map: "PK_Menu") @db.NVarChar(3)
+  MenuN  String @db.NVarChar(150)
+  Ref    String @db.NVarChar(10)
+}
+
+model Prod {
+  ProdID   String  @id(map: "PK_Prod") @db.NVarChar(4)
+  ProdName String  @db.NVarChar(150)
+  GenID    String  @db.NVarChar(4)
+  Generic  Gen     @relation(fields: [GenID], references: [GenID])
+  Pack     String  @db.NVarChar(150)
+  ManuID   String  @db.NVarChar(3)
+  Manuf    Manu    @relation(fields: [ManuID], references: [ManuID])
+  Status   String  @db.NVarChar(20)
+  PCT      String? @db.NVarChar(9)
+  RegNo    String? @db.NVarChar(20)
+  RegYear  String? @db.NVarChar(4)
+  ShLife   String? @db.NVarChar(15)
+  MRP      Float?
+  ImDs     ImD[]
+}
+
+model Users {
+  UserID   String @id(map: "PK_Users") @db.NVarChar(2)
+  UserName String @db.NVarChar(75)
+  Password String @db.NVarChar(11)
+  Type     String @db.NVarChar(15)
+}
+
